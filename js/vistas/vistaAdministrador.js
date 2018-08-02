@@ -11,6 +11,11 @@ var VistaAdministrador = function(modelo, controlador, elementos) {
   this.modelo.preguntaAgregada.suscribir(function() {
     contexto.reconstruirLista();
   });
+
+  this.modelo.preguntaEliminada.suscribir(function() {
+    contexto.reconstruirLista();
+  });
+
 };
 
 
@@ -39,8 +44,6 @@ VistaAdministrador.prototype = {
     interiorItem.find('small').text(pregunta.cantidadPorRespuesta.map(function(resp){
       return " " + resp;
     }));
-
-    // resp.textoRespuesta
 
     nuevoItem.html($('.d-flex').html());
 
@@ -74,7 +77,29 @@ VistaAdministrador.prototype = {
       contexto.limpiarFormulario();
       contexto.controlador.agregarPregunta(value, respuestas);
     });
-    //asociar el resto de los botones a eventos
+
+    e.botonBorrarPregunta.click(function() {
+      const id = parseInt(e.lista.find(".active")[0].id);
+
+      if (id !== 0 && !isNaN(id)) {
+        contexto.limpiarFormulario();
+        contexto.controlador.eliminarPregunta(id);
+      }
+    });
+
+    e.botonEditarPregunta.click(function() {
+      debugger;
+
+      contexto.limpiarFormulario();
+      // contexto.controlador.editarPregunta();
+    });
+
+    e.borrarTodo.click(function() {
+      debugger;
+
+      contexto.limpiarFormulario();
+      // contexto.controlador.borrarTodo();
+    });
   },
 
   limpiarFormulario: function(){
