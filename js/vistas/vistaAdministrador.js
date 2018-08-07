@@ -1,7 +1,7 @@
 /*
  * Vista administrador
  */
-var VistaAdministrador = function(modelo, controlador, elementos) {
+const VistaAdministrador = function(modelo, controlador, elementos) {
   this.modelo = modelo;
   this.controlador = controlador;
   this.elementos = elementos;
@@ -13,6 +13,10 @@ var VistaAdministrador = function(modelo, controlador, elementos) {
   });
 
   this.modelo.preguntaEliminada.suscribir(function() {
+    contexto.reconstruirLista();
+  });
+
+  this.modelo.preguntasEliminadas.suscribir(function() {
     contexto.reconstruirLista();
   });
 
@@ -79,26 +83,75 @@ VistaAdministrador.prototype = {
     });
 
     e.botonBorrarPregunta.click(function() {
+      const preguntaActiva = e.lista.find(".active");
+
+      if (preguntaActiva.length === 0){
+        swal("Eliminar", "No seleccionaste ninguna pregunta!", "error");
+
+        return false;
+      };
+
       const id = parseInt(e.lista.find(".active")[0].id);
+      const pregunta = e.lista.find(".active").find("h5")[0].innerText;
 
-      if (id !== 0 && !isNaN(id)) {
-        contexto.limpiarFormulario();
-        contexto.controlador.eliminarPregunta(id);
-      }
-    });
-
-    e.botonEditarPregunta.click(function() {
-      debugger;
-
-      contexto.limpiarFormulario();
-      // contexto.controlador.editarPregunta();
+      swal("Esta seguro?", "Se va a eliminar la pregunta! (" + pregunta + ")", "warning", {
+        buttons: {
+          cancelar: {
+              text: "Cancelar",
+              value: false
+          },
+          ok: {
+            text: "Eliminar",
+            value: true
+          },
+        },
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          contexto.limpiarFormulario();
+          contexto.controlador.eliminarPregunta(id);
+        }
+      });
     });
 
     e.borrarTodo.click(function() {
+      swal("Esta seguro?", "Se van a eliminar TODAS las preguntas!", "warning", {
+        buttons: {
+          Cancelar: {
+              text: "Cancelar",
+              value: false
+          },
+          Ok: {
+              text: "Eliminar",
+              value: true
+          },
+        },
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          contexto.limpiarFormulario();
+          contexto.controlador.eliminarTodasPreguntas();
+        }
+      });
+    });
+
+    e.botonEditarPregunta.click(function() {
+      const preguntaActiva = e.lista.find(".active");
+
+      if (preguntaActiva.length === 0){
+        swal("Modificar", "No seleccionaste ninguna pregunta!", "error");
+
+        return false;
+      };
+
+      const id = parseInt(e.lista.find(".active")[0].id);
+
       debugger;
 
-      contexto.limpiarFormulario();
-      // contexto.controlador.borrarTodo();
+      // Llamar Form modal con los datos de la pregunta selecciona
+      // Si todo esta ok, reemplazar los datos modificados
+
+      //contexto.controlador.editarPregunta(id);
     });
   },
 
