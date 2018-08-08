@@ -1,5 +1,5 @@
-function validacionDeFormulario(){
-$('#localStorageForm')
+function validacionDeFormulario(idFormulario){
+$(idFormulario)
   .formValidation({
     framework: 'bootstrap',
     icon: {
@@ -38,7 +38,7 @@ $('#localStorageForm')
       $option = $clone.find('[name="option[]"]');
 
     // agregado de nuevo campo al formulario
-    $('#localStorageForm').formValidation('addField', $option);
+    $(idFormulario).formValidation('addField', $option);
   })
 
   // Manejo del boton agregar respuesta
@@ -50,7 +50,7 @@ $('#localStorageForm')
     $row.remove();
 
     // Eliminar campo del formulario
-    $('#localStorageForm').formValidation('removeField', $option);
+    $(idFormulario).formValidation('removeField', $option);
   })
 
   // Llamada después de eliminar el campo
@@ -60,8 +60,8 @@ $('#localStorageForm')
     // data.options --> las nuevas opciones del campo
 
     if (data.field === 'option[]') {
-      if ($('#localStorageForm').find(':visible[name="option[]"]').length >= 5) {
-        $('#localStorageForm').find('.botonAgregarRespuesta').attr('disabled', 'disabled');
+      if ($(idFormulario).find(':visible[name="option[]"]').length >= 5) {
+        $(idFormulario).find('.botonAgregarRespuesta').attr('disabled', 'disabled');
       }
     }
   })
@@ -69,8 +69,8 @@ $('#localStorageForm')
   // Llamada después de eliminar el campo
   .on('removed.field.fv', function(e, data) {
     if (data.field === 'option[]') {
-      if ($('#localStorageForm').find(':visible[name="option[]"]').length < 5) {
-        $('#localStorageForm').find('.botonAgregarRespuesta').removeAttr('disabled');
+      if ($(idFormulario).find(':visible[name="option[]"]').length < 5) {
+        $(idFormulario).find('.botonAgregarRespuesta').removeAttr('disabled');
       }
     }
   });

@@ -20,6 +20,10 @@ const VistaAdministrador = function(modelo, controlador, elementos) {
     contexto.reconstruirLista();
   });
 
+  this.modelo.preguntaEditada.suscribir(function() {
+    contexto.reconstruirLista();
+  });
+
 };
 
 
@@ -29,7 +33,8 @@ VistaAdministrador.prototype = {
     //llamar a los metodos para reconstruir la lista, configurar botones y validar formularios
     this.reconstruirLista();
     this.configuracionDeBotones();
-    validacionDeFormulario();
+    validacionDeFormulario('#localStorageForm');
+    validacionDeFormulario('#localStorageFormModal');
   },
 
   construirElementoPregunta: function(pregunta){
@@ -159,7 +164,7 @@ VistaAdministrador.prototype = {
       const id = parseInt(e.lista.find(".active")[0].id);
 
       debugger;
-
+      e.formularioModal[0].style.display = 'block'
       // Llamar Form modal con los datos de la pregunta selecciona
       // Si todo esta ok, reemplazar los datos modificados
 
