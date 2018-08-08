@@ -72,11 +72,23 @@ VistaAdministrador.prototype = {
       const value = e.pregunta.val();
       const respuestas = [];
 
+      if (value === ""){
+        swal("Crear", "No completaste el contenido de la pregunta!", "error");
+
+        return false;
+      };
+
       $('[name="option[]"]').each(function() {
         if (this.value !== '' ) {
           respuestas.push(this.value);
         }
       })
+
+      if (respuestas.length === 0){
+        swal("Crear", "No completaste al menos una posible respuesta!", "error");
+
+        return false;
+      };
 
       contexto.limpiarFormulario();
       contexto.controlador.agregarPregunta(value, respuestas);
