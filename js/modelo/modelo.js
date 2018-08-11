@@ -51,11 +51,11 @@ Modelo.prototype = {
 
   //se agrega una pregunta dado un nombre y sus respuestas
   editarPregunta: function(idPregunta, pregunta, respuestas) {
-    for (let i = 0; i < this.preguntas.lenght; i++){
+    for (let i = 0; i < this.preguntas.length; i++){
       if (this.preguntas[i].id === idPregunta){
         this.preguntas[i].textoPregunta = pregunta;
         this.preguntas[i].cantidadPorRespuesta = respuestas;
-        i = this.preguntas.lenght;
+        i = this.preguntas.length;
       };
     };
 

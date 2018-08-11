@@ -6,6 +6,7 @@ const VistaAdministrador = function(modelo, controlador, elementos) {
   this.controlador = controlador;
   this.elementos = elementos;
   const contexto = this;
+  let idEdicion;
 
   // suscripción de observadores
   this.modelo.preguntaAgregada.suscribir(function() {
@@ -33,8 +34,8 @@ VistaAdministrador.prototype = {
     //llamar a los metodos para reconstruir la lista, configurar botones y validar formularios
     this.reconstruirLista();
     this.configuracionDeBotones();
-    validacionDeFormulario('#localStorageForm');
-    validacionDeFormulario('#localStorageFormModal');
+    validacionDeFormulario('#localStorageForm','#optionTemplate');
+    validacionDeFormulario('#localStorageFormModal','#optionTemplateModal');
   },
 
   construirElementoPregunta: function(pregunta){
@@ -84,9 +85,9 @@ VistaAdministrador.prototype = {
       };
 
       $('[name="option[]"]').each(function() {
-        if (this.value !== '' ) {
+        if (this.value !== ""){
           respuestas.push(this.value);
-        }
+        };
       })
 
       if (respuestas.length === 0){
@@ -127,7 +128,7 @@ VistaAdministrador.prototype = {
         if (willDelete) {
           contexto.limpiarFormulario();
           contexto.controlador.eliminarPregunta(id);
-        }
+        };
       });
     });
 
@@ -148,7 +149,7 @@ VistaAdministrador.prototype = {
         if (willDelete) {
           contexto.limpiarFormulario();
           contexto.controlador.eliminarTodasPreguntas();
-        }
+        };
       });
     });
 
@@ -161,18 +162,92 @@ VistaAdministrador.prototype = {
         return false;
       };
 
-      const id = parseInt(e.lista.find(".active")[0].id);
+      contexto.idEdicion = parseInt(e.lista.find(".active")[0].id);
 
-      debugger;
-      e.formularioModal[0].style.display = 'block'
-      // Llamar Form modal con los datos de la pregunta selecciona
-      // Si todo esta ok, reemplazar los datos modificados
+      contexto.limpiarFormularioModal();
 
-      //contexto.controlador.editarPregunta(id);
+      contexto.completarModal(contexto.idEdicion);
+
+      contexto.mostrarModal();
     });
+
+    e.botonModificarPregunta.click(function() {
+      const value = e.preguntaModal.val();
+      const respuestas = [];
+
+      if (value === ""){
+        swal("Editar", "No completaste el contenido de la pregunta!", "error");
+
+        return false;
+      };
+
+      $('[name="option[]"]').each(function() {
+        if (this.value !== ""){
+          respuestas.push(this.value);
+        };
+      })
+
+      if (respuestas.length === 0){
+        swal("Editar", "No completaste al menos una posible respuesta!", "error");
+
+        return false;
+      };
+
+      contexto.controlador.editarPregunta(contexto.idEdicion, value, respuestas);
+
+      contexto.ocultarModal();
+    });
+
+    e.botonCancelarModificacion.click(function() {
+      contexto.ocultarModal();
+    });
+
+  },
+
+  completarModal: function(idPregunta){
+    // Recargar campos
+    for (let i = 0;i < this.modelo.preguntas.length; i++){
+      if (this.modelo.preguntas[i].id === idPregunta){
+
+        $('#preguntaModal').val( this.modelo.preguntas[i].textoPregunta );
+
+        for (let j = 0; j < this.modelo.preguntas[i].cantidadPorRespuesta.length - 1; j++){
+            const $template = $('#optionTemplateModal'),
+            idRespuesta = j + 2,
+            $clone = $template
+            .clone()
+            .removeClass('hide')
+            .addClass('eliminar')
+            .attr('id', "respuesta" + idRespuesta)
+            .insertBefore($template),
+            $option = $clone.find('[name="option[]"]');
+
+            // agregado de nuevo campo al formulario
+            $('#localStorageFormModal').formValidation('addField', $option);
+        };
+
+        for (let j = 0; j < this.modelo.preguntas[i].cantidadPorRespuesta.length; j++){
+          $('#localStorageFormModal').find('[name="option[]"]')[j].value = this.modelo.preguntas[i].cantidadPorRespuesta[j];
+        }
+
+        i = this.modelo.preguntas.length;
+      };
+    };
+  },
+
+  mostrarModal: function(){
+    this.elementos.containerModal.style.display = "block";
+  },
+
+  ocultarModal: function(){
+    this.elementos.containerModal.style.display = "none";
   },
 
   limpiarFormulario: function(){
     $('.form-group.answer.has-feedback.has-success').remove();
+  },
+
+  limpiarFormularioModal: function(){
+    $('.eliminar').remove();
   },
 };

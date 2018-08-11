@@ -1,4 +1,4 @@
-function validacionDeFormulario(idFormulario){
+function validacionDeFormulario(idFormulario, optionTemplate){
 $(idFormulario)
   .formValidation({
     framework: 'bootstrap',
@@ -29,7 +29,8 @@ $(idFormulario)
     }
   })
   .on('click', '.botonAgregarRespuesta', function() {
-    var $template = $('#optionTemplate'),
+    //const $template = $(idFormulario).find(optionTemplate),
+    const $template = $(optionTemplate),
       $clone = $template
       .clone()
       .removeClass('hide')
@@ -43,7 +44,7 @@ $(idFormulario)
 
   // Manejo del boton agregar respuesta
   .on('click', '.botonBorrarRespuesta', function() {
-    var $row = $(this).parents('.form-group'),
+    const $row = $(this).parents('.form-group'),
       $option = $row.find('[name="option[]"]');
 
     // Eliminar elemento conteniendo la opcion
