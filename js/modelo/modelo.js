@@ -12,6 +12,7 @@ const Modelo = function() {
   this.preguntaEliminada = new Evento(this);
   this.preguntasEliminadas = new Evento(this);
   this.preguntaEditada = new Evento(this);
+  this.preguntaVotada = new Evento(this);
 };
 
 Modelo.prototype = {
@@ -61,7 +62,31 @@ Modelo.prototype = {
 
     this.guardar();
     this.preguntaEditada.notificar();
-},
+  },
+
+  //se obtienen  pregunta desde su nombre
+  obtenerPregunta: function(nombrePregunta) {
+    for (let i = 0; i < this.preguntas.length; i++){
+      if (this.preguntas[i].textoPregunta === nombrePregunta) {
+        return i;
+        }
+      };
+
+      return -1;
+    },
+
+  //se agrega un voto a la respuesta seleccionada
+  agregarVoto: function(pregunta, respuesta) {
+    for (let i = 0; i < this.preguntas[pregunta].cantidadPorRespuesta.length; i++){
+      if (this.preguntas[pregunta].cantidadPorRespuesta[i].textoRespuesta === respuesta) {
+        this.preguntas[pregunta].cantidadPorRespuesta[i].cantidad++;
+        i = this.preguntas[pregunta].cantidadPorRespuesta.length;
+      }
+    };
+
+    this.guardar();
+    this.preguntaVotada.notificar();
+  },
 
   //se guardan las preguntas
   guardar: function(){

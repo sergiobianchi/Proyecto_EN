@@ -52,7 +52,7 @@ VistaAdministrador.prototype = {
     titulo.text(pregunta.textoPregunta);
 
     interiorItem.find('small').text(pregunta.cantidadPorRespuesta.map(function(resp){
-      return " " + resp;
+      return " " + resp.textoRespuesta;
     }));
 
     nuevoItem.html($('.d-flex').html());
@@ -76,7 +76,6 @@ VistaAdministrador.prototype = {
     //asociacion de eventos a boton
     e.botonAgregarPregunta.click(function() {
       const value = e.pregunta.val();
-      const respuestas = [];
 
       if (value === ""){
         swal("Crear", "No completaste el contenido de la pregunta!", "error");
@@ -84,11 +83,7 @@ VistaAdministrador.prototype = {
         return false;
       };
 
-      $('[name="option[]"]').each(function() {
-        if (this.value !== ""){
-          respuestas.push(this.value);
-        };
-      })
+      const respuestas = contexto.agregarRespuestas();
 
       if (respuestas.length === 0){
         swal("Crear", "No completaste al menos una posible respuesta!", "error");
@@ -173,7 +168,6 @@ VistaAdministrador.prototype = {
 
     e.botonModificarPregunta.click(function() {
       const value = e.preguntaModal.val();
-      const respuestas = [];
 
       if (value === ""){
         swal("Editar", "No completaste el contenido de la pregunta!", "error");
@@ -181,11 +175,7 @@ VistaAdministrador.prototype = {
         return false;
       };
 
-      $('[name="option[]"]').each(function() {
-        if (this.value !== ""){
-          respuestas.push(this.value);
-        };
-      })
+      const respuestas = contexto.agregarRespuestas();
 
       if (respuestas.length === 0){
         swal("Editar", "No completaste al menos una posible respuesta!", "error");
@@ -227,12 +217,25 @@ VistaAdministrador.prototype = {
         };
 
         for (let j = 0; j < this.modelo.preguntas[i].cantidadPorRespuesta.length; j++){
-          $('#localStorageFormModal').find('[name="option[]"]')[j].value = this.modelo.preguntas[i].cantidadPorRespuesta[j];
+          $('#localStorageFormModal').find('[name="option[]"]')[j].value = this.modelo.preguntas[i].cantidadPorRespuesta[j].textoRespuesta;
         }
 
         i = this.modelo.preguntas.length;
       };
     };
+  },
+
+  agregarRespuestas: function(){
+    const respuestas = [];
+
+    $('[name="option[]"]').each(function() {
+      if (this.value !== ""){
+        const respuesta = {'textoRespuesta': this.value, cantidad: 0};
+        respuestas.push(respuesta);
+      };
+    })
+
+    return respuestas;
   },
 
   mostrarModal: function(){
