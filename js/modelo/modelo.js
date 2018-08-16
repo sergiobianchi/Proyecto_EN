@@ -4,6 +4,10 @@
 const Modelo = function() {
   this.preguntas = [];
   this.ultimoId = 0;
+  this.errores = [{numero: 1, mensaje: 'No completaste el contenido de la pregunta!'},
+                  {numero: 2, mensaje: 'Ya hay otra pregunta igual!'},
+                  {numero: 3, mensaje: 'No completaste al menos una posible respuesta!'},
+                ];
 
   this.recuperar();
 
@@ -37,7 +41,7 @@ Modelo.prototype = {
         this.preguntas.splice( i, 1);
         this.guardar();
         this.preguntaEliminada.notificar();
-        i = this.preguntas.lenght;
+        break;
         }
       };
     },
@@ -56,7 +60,7 @@ Modelo.prototype = {
       if (this.preguntas[i].id === idPregunta){
         this.preguntas[i].textoPregunta = pregunta;
         this.preguntas[i].cantidadPorRespuesta = respuestas;
-        i = this.preguntas.length;
+        break;
       };
     };
 
@@ -80,7 +84,7 @@ Modelo.prototype = {
     for (let i = 0; i < this.preguntas[pregunta].cantidadPorRespuesta.length; i++){
       if (this.preguntas[pregunta].cantidadPorRespuesta[i].textoRespuesta === respuesta) {
         this.preguntas[pregunta].cantidadPorRespuesta[i].cantidad++;
-        i = this.preguntas[pregunta].cantidadPorRespuesta.length;
+        break;
       }
     };
 
@@ -103,5 +107,18 @@ Modelo.prototype = {
       this.preguntas = JSON.parse(localStorage.getItem("preguntas"));
     }
   },
+
+  obtenerMensajeDeError: function(idError) {
+    let mensajeError = '';
+
+    for (let i = 0; i < this.errores.length; i++){
+      if (this.errores[i].numero === idError) {
+        mensajeError = this.errores[i].mensaje;
+        break;
+        };
+      };
+
+      return mensajeError;
+    },
 
 };

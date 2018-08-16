@@ -76,17 +76,19 @@ VistaAdministrador.prototype = {
     //asociacion de eventos a boton
     e.botonAgregarPregunta.click(function() {
       const value = e.pregunta.val();
+      let validaValor = contexto.controlador.validarPregunta(value, -1);
 
-      if (value === ""){
-        swal("Crear", "No completaste el contenido de la pregunta!", "error");
+      if (validaValor.errorNumero > 0){
+        swal("Crear", validaValor.errorMensaje, "error");
 
         return false;
       };
 
       const respuestas = contexto.agregarRespuestas();
+      validaValor = contexto.controlador.validarRespuesta(respuestas);
 
-      if (respuestas.length === 0){
-        swal("Crear", "No completaste al menos una posible respuesta!", "error");
+      if (validaValor.errorNumero > 0){
+        swal("Crear", validaValor.errorMensaje, "error");
 
         return false;
       };
@@ -168,17 +170,19 @@ VistaAdministrador.prototype = {
 
     e.botonModificarPregunta.click(function() {
       const value = e.preguntaModal.val();
+      let validaValor = contexto.controlador.validarPregunta(value, contexto.idEdicion);
 
-      if (value === ""){
-        swal("Editar", "No completaste el contenido de la pregunta!", "error");
+      if (validaValor.errorNumero > 0){
+        swal("Editar", validaValor.errorMensaje, "error");
 
         return false;
       };
 
       const respuestas = contexto.agregarRespuestas();
+      validaValor = contexto.controlador.validarRespuesta(respuestas);
 
-      if (respuestas.length === 0){
-        swal("Editar", "No completaste al menos una posible respuesta!", "error");
+      if (validaValor.errorNumero > 0){
+        swal("Editar", validaValor.errorMensaje, "error");
 
         return false;
       };
@@ -220,7 +224,7 @@ VistaAdministrador.prototype = {
           $('#localStorageFormModal').find('[name="option[]"]')[j].value = this.modelo.preguntas[i].cantidadPorRespuesta[j].textoRespuesta;
         }
 
-        i = this.modelo.preguntas.length;
+        break;
       };
     };
   },
