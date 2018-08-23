@@ -14,14 +14,17 @@ var VistaUsuario = function(modelo, controlador, elementos) {
 
   this.modelo.preguntaEliminada.suscribir(function() {
     contexto.reconstruirLista();
+    contexto.reconstruirGrafico();
   });
 
   this.modelo.preguntasEliminadas.suscribir(function() {
     contexto.reconstruirLista();
+    contexto.reconstruirGrafico();
   });
 
   this.modelo.preguntaEditada.suscribir(function() {
     contexto.reconstruirLista();
+    contexto.reconstruirGrafico();
   });
 
   this.modelo.preguntaVotada.suscribir(function() {
@@ -38,7 +41,7 @@ VistaUsuario.prototype = {
     const contexto = this;
 
     elementos.botonAgregar.click(function() {
-      contexto.agregarVotos();
+      contexto.controlador.agregarVoto();
     });
 
     this.reconstruirGrafico();
@@ -93,21 +96,8 @@ VistaUsuario.prototype = {
     });
   },
 
-  agregarVotos: function(){
-    const contexto = this;
-    $('#preguntas').find('div').each(function(){
-        const nombrePregunta = $(this).attr('value')
-        const id = $(this).attr('id')
-        const pregunta = contexto.modelo.obtenerPregunta(nombrePregunta);
-        const respuestaSeleccionada = $('input[name=' + id + ']:checked').val();
-
-        if (respuestaSeleccionada !== undefined){
-          $('input[name=' + id + ']').prop('checked',false);
-          contexto.controlador.agregarVoto(pregunta,respuestaSeleccionada);}
-      });
-  },
-
   dibujarGrafico: function(nombre, respuestas){
+    debugger;
     let seVotoAlgunaVez = false;
     for(var i=1;i<respuestas.length;++i){
       if(respuestas[i][1]>0){
@@ -118,22 +108,23 @@ VistaUsuario.prototype = {
     google.charts.load("current", {packages:["corechart"]});
     google.charts.setOnLoadCallback(drawChart);
     function drawChart() {
-      const data = google.visualization.arrayToDataTable(respuestas);
-
-      const options = {
-        title: nombre,
-        is3D: true,
-      };
-      const ubicacionGraficos = contexto.elementos.graficosDeTorta;
-      const id = (nombre.replace(/\W/g, '')).split(' ').join('')+'_grafico';
-      if($('#'+id).length){$('#'+id).remove()}
-      const div = document.createElement('div');
-      ubicacionGraficos.append(div);
-      div.id = id;
-      div.style.width = '400';
-      div.style.height = '300px';
-      const chart = new google.visualization.PieChart(div);
       if(seVotoAlgunaVez){
+        const data = google.visualization.arrayToDataTable(respuestas);
+
+        const options = {
+          title: nombre,
+          is3D: true,
+        };
+        const ubicacionGraficos = contexto.elementos.graficosDeTorta;
+        const id = (nombre.replace(/\W/g, '')).split(' ').join('')+'_grafico';
+        if($('#'+id).length){$('#'+id).remove()}
+        const div = document.createElement('div');
+        ubicacionGraficos.append(div);
+        div.id = id;
+        div.style.width = '400';
+        div.style.height = '300px';
+        const chart = new google.visualization.PieChart(div);
+      
         chart.draw(data, options);
       }
     }

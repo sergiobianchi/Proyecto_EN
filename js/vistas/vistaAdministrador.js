@@ -75,26 +75,13 @@ VistaAdministrador.prototype = {
 
     //asociacion de eventos a boton
     e.botonAgregarPregunta.click(function() {
-      const value = e.pregunta.val();
-      let validaValor = contexto.controlador.validarPregunta(value, -1);
+      const resultado = contexto.controlador.agregarPregunta();
 
-      if (validaValor.errorNumero > 0){
-        swal("Crear", validaValor.errorMensaje, "error");
-
-        return false;
+      if (resultado.length !== 0 ){
+        swal("Agregar Pregunta", resultado, "error");
+      } else {
+        contexto.limpiarFormulario();
       };
-
-      const respuestas = contexto.agregarRespuestas();
-      validaValor = contexto.controlador.validarRespuesta(respuestas);
-
-      if (validaValor.errorNumero > 0){
-        swal("Crear", validaValor.errorMensaje, "error");
-
-        return false;
-      };
-
-      contexto.limpiarFormulario();
-      contexto.controlador.agregarPregunta(value, respuestas);
     });
 
     e.botonBorrarPregunta.click(function() {
@@ -169,33 +156,18 @@ VistaAdministrador.prototype = {
     });
 
     e.botonModificarPregunta.click(function() {
-      const value = e.preguntaModal.val();
-      let validaValor = contexto.controlador.validarPregunta(value, contexto.idEdicion);
+      const resultado = contexto.controlador.editarPregunta(contexto.idEdicion);
 
-      if (validaValor.errorNumero > 0){
-        swal("Editar", validaValor.errorMensaje, "error");
-
-        return false;
+      if (resultado.length !== 0 ){
+        swal("Modificar Pregunta", resultado, "error");
       };
-
-      const respuestas = contexto.agregarRespuestas();
-      validaValor = contexto.controlador.validarRespuesta(respuestas);
-
-      if (validaValor.errorNumero > 0){
-        swal("Editar", validaValor.errorMensaje, "error");
-
-        return false;
-      };
-
-      contexto.controlador.editarPregunta(contexto.idEdicion, value, respuestas);
-
-      contexto.ocultarModal();
+      
+      contexto.ocultarModal();      
     });
 
     e.botonCancelarModificacion.click(function() {
       contexto.ocultarModal();
     });
-
   },
 
   completarModal: function(idPregunta){
@@ -227,19 +199,6 @@ VistaAdministrador.prototype = {
         break;
       };
     };
-  },
-
-  agregarRespuestas: function(){
-    const respuestas = [];
-
-    $('[name="option[]"]').each(function() {
-      if (this.value !== ""){
-        const respuesta = {'textoRespuesta': this.value, cantidad: 0};
-        respuestas.push(respuesta);
-      };
-    })
-
-    return respuestas;
   },
 
   mostrarModal: function(){
